@@ -1,12 +1,13 @@
 package util
 
 import com.mojang.brigadier.arguments.StringArgumentType
+import com.mojang.brigadier.builder.LiteralArgumentBuilder as BrigadierLiteral
+import com.mojang.brigadier.builder.RequiredArgumentBuilder as BrigadierArgument
 import com.mojang.brigadier.tree.ArgumentCommandNode
 import com.mojang.brigadier.tree.CommandNode
 import me.ancientri.rimelib.RimeLib
 import me.ancientri.rimelib.util.command.command
 import net.minecraft.command.CommandSource
-import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -14,12 +15,13 @@ import org.junit.jupiter.api.Test
 class CommandUtilTest {
 	@Test
 	fun test() {
-		val a = CommandManager.literal(RimeLib.NAMESPACE)
+		val a = BrigadierLiteral.literal<ServerCommandSource>(RimeLib.NAMESPACE)
 			.then(
-				CommandManager.literal("example")
-					.then(CommandManager.literal("subcommand"))
-					.then(CommandManager.argument("subcommand2", StringArgumentType.word()))
-			).build()
+				BrigadierLiteral.literal<ServerCommandSource>("example")
+					.then(BrigadierLiteral.literal<ServerCommandSource>("subcommand"))
+					.then(BrigadierArgument.argument<ServerCommandSource, String>("subcommand2", StringArgumentType.word()))
+				)
+			.build()
 		val b = command<ServerCommandSource>(RimeLib.NAMESPACE) {
 			literal("example") {
 				literal("subcommand")
